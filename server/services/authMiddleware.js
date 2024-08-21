@@ -1,5 +1,5 @@
 const { decrypt } = require('./session'); 
-const publicRoutes = ['/signin', '/signup'];
+const publicRoutes = ['/api/auth/signin', '/api/auth/signup'];
 
 async function authenticate(req, res, next) {
   const path = req.path;
