@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  password     String
+  events       Event[]       @relation("UserEvents") // Events created by the user
+  applications Application[] // Applications submitted by the user
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id           String        @id @default(cuid())
+  name         String
+  description  String
+  location     String
+  date         DateTime
+  capacity     Int
+  fee          Float
+  creator      User          @relation(fields: [creatorId], references: [id], name: "UserEvents")
+  creatorId    String
+  applications Application[] @relation("EventApplications") // Applications for this event
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Application {
+  id      String @id @default(cuid())
+  status  String // 'pending', 'accepted', 'rejected'
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], name: "EventApplications")
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
