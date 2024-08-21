@@ -1,11 +1,11 @@
-const createApp = require('./app'); 
-const prisma = require('./lib/prisma-client'); 
+const setupServer = require('./express-server');
+const prisma = require('./prisma-client'); 
 
 async function main() {
   try {
 
     // Singleton app instance
-    const app = createApp(); 
+    const app = await setupServer(); 
 
     // Ensure prisma connection
     await prisma.$connect();
