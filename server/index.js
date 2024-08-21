@@ -1,31 +1,31 @@
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const prisma = require('./lib/prisma-client'); // Adjust path as needed
-const { createSession, deleteSession, getUserIdFromSession } = require('./lib/sessions'); // Adjust path as needed
+const createApp = require('./app'); 
+const prisma = require('./lib/prisma-client'); 
 
-const app = express();
-app.use(express.json());
-app.use(cookieParser());
+async function main() {
+  try {
 
-// Define routes for authentication
-app.post('/api/auth/signin', async (req, res) => {
-  // Implement sign-in logic here using prisma and sessions
-});
+    // Singleton app instance
+    const app = createApp(); 
 
-app.post('/api/auth/signout', (req, res) => {
-  // Implement sign-out logic here
-});
+    // Ensure prisma connection
+    await prisma.$connect();
+    console.log('Prisma connected successfully.');
 
-// Example protected route
-app.get('/api/protected', async (req, res) => {
-  const userId = await getUserIdFromSession(req);
-  if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    // Start the server
+    const PORT = process.env.PORT || 3001;
+    app.listen(PORT, () => {
+      console.log(`Server is running, listening on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Error during app initialization:', error);
+    process.exit(1);
   }
-  res.status(200).json({ success: `User ID ${userId} is authorized.` });
-});
+}
 
-const port = process.env.PORT || 3001;
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+main()
+  .then(() => {
+    console.log('App initialized successfully');
+  })
+  .catch((error) => {
+    console.error('App initialization failed:', error);
+  });
