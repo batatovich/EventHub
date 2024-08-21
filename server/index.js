@@ -1,5 +1,4 @@
 const cluster = require('cluster');
-const os = require('os');
 const setupServer = require('./setup-server');
 const config = require('./config');
 const prisma = require('./prisma-client');
