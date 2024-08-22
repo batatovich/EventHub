@@ -8,15 +8,7 @@ import CreateEventButton from '@/components/home/CreateEventButton';
 import EventCard from '@/components/home/EventCard';
 
 export default function MyEventsPage() {
-  const router = useRouter();
   const { loading, error, data, refetch } = useQuery(GET_MY_EVENTS);
-
-  useEffect(() => {
-    // Handle network errors like 401 Unauthorized
-    if (error && error.networkError && error.networkError.statusCode === 401) {
-      router.push('/signin'); // Redirect to the sign-in page if unauthorized
-    }
-  }, [error, router]);
 
   if (loading) return (
     <div className="flex justify-center items-center h-48">

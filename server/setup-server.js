@@ -6,6 +6,7 @@ const config = require('./config');
 const createSignInRoute = require('./api/signin');
 const createSignUpRoute = require('./api/signup');
 const createSignOutRoute = require('./api/signout');
+const createValidateSessionRoute = require('./api/validate-session');
 
 
 async function setupServer({ prisma, authenticate, createApolloServer }) {
@@ -31,6 +32,7 @@ async function setupServer({ prisma, authenticate, createApolloServer }) {
     app.use('/api/auth/signup',createSignUpRoute(prisma));
     app.use('/api/auth/signin', createSignInRoute(prisma));
     app.use('/api/auth/signout', createSignOutRoute()); 
+    app.use('/api/auth/validate-session', createValidateSessionRoute()); 
 
     return app;
 }

@@ -9,9 +9,37 @@ export default async function middleware(req) {
 
   // Check if the session cookie exists
   const sessionCookie = cookies().get('session');
-  
+
+  if (!isPublicRoute && sessionCookie) {
+    try {
+      // Make a request to the backend to validate the session
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/validate-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': `session=${sessionCookie.value}`,
+        },
+      });
+
+      if (response.status !== 200) {
+        return NextResponse.redirect(new URL('/signin', req.nextUrl));
+      }
+
+      const result = await response.json();  
+
+      if (!result.valid) {
+        return NextResponse.redirect(new URL('/signin', req.nextUrl));
+      }
+
+      return NextResponse.next();
+
+    } catch (error) {
+      console.error('Session validation failed:', error);
+      return NextResponse.redirect(new URL('/signin', req.nextUrl));
+    }
+  }
+
   if (!isPublicRoute && !sessionCookie) {
-    // Redirect to sign-in page if the user is not authenticated
     return NextResponse.redirect(new URL('/signin', req.nextUrl));
   }
 
