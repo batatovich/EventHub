@@ -5,10 +5,10 @@ const prisma = require('./prisma-client');
 const authenticate = require('./services/authMiddleware');
 const createApolloServer = require('./apollo-server');
 const gracefulShutdown = require('./services/shutdown-server');
+require('dotenv').config();
+
 
 if (config.SHOULD_FORK && cluster.isMaster) {
-  console.log(`Master ${process.pid} is running`);
-
   for (let i = 0; i < config.MAX_FORKS; i++) {
     cluster.fork();
   }

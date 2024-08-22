@@ -12,19 +12,19 @@ async function setupServer({ prisma, authenticate, createApolloServer }) {
     const app = express();
 
     // Middleware
-    app.use(cors({ origin: config.CORS_ORIGIN }));
+    app.use(cors(config.CORS_OPTIONS));
     app.use(express.json());
     app.use(cookieParser()); 
 
     // Authentication middleware 
     if (authenticate) {
-        app.use(authenticate);
+       app.use(authenticate);
     }
 
     // Apollo Server 
     if (createApolloServer) {
         const apolloServer = await createApolloServer();
-        app.use('/graphql', expressMiddleware(apolloServer));
+        app.use('/api/graphql', expressMiddleware(apolloServer));
     }
 
     // Authentication routes
