@@ -1,127 +1,43 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SignInSchema } from '@/lib/validation-schemas';
+import { useAuthForm } from '@/lib/hooks/useAuthForm';
+import { FormInput } from '@/components/auth/FormInput';
+import { FormButton } from '@/components/auth/FormButton';
+import { StatusMessage } from '@/components/auth/StatusMessage';
 import Link from 'next/link';
 
-function useSignIn() {
-  const [statusMessage, setStatusMessage] = useState('');
-  const [processing, setProcessing] = useState(false);
-  const [validationErrors, setValidationErrors] = useState({});
+export default function SignInPage() {
   const router = useRouter();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setProcessing(true);
-    setValidationErrors({});
+  async function submitForm(data) {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signin`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-    const formData = new FormData(event.target);
-    const data = {
-      email: formData.get('email'),
-      password: formData.get('password'),
-    };
+    const result = await response.json();
 
-    try {
-      await SignInSchema.validate(data, { abortEarly: false });
-
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signin`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (result.error) {
-        setStatusMessage(`Error: ${result.error}`);
-        setProcessing(false);
-      } else {
-        setStatusMessage('Successfully authenticated!');
-        router.push('/dashboard');
-      }
-    } catch (error) {
-      setProcessing(false);
-      if (error.name === 'ValidationError') {
-        const formattedErrors = error.inner.reduce((acc, err) => {
-          acc[err.path] = err.message;
-          return acc;
-        }, {});
-        setValidationErrors(formattedErrors);
-      } else {
-        setStatusMessage('An unexpected error occurred. Please try again.');
-      }
+    if (!result.error) {
+      router.push('/dashboard');
     }
-  };
 
-  return {
-    statusMessage,
-    processing,
-    validationErrors,
-    handleSubmit,
-  };
-}
-
-function StatusMessage({ message }) {
-  if (!message) return null;
-
-  const messageClass = message.includes('Error')
-    ? 'bg-red-100 text-red-700 border border-red-500'
-    : 'bg-green-100 text-green-700 border border-green-500';
-
-  return (
-    <div className={`mt-4 w-full text-center p-3 rounded ${messageClass}`}>
-      <p>{message}</p>
-    </div>
-  );
-}
-
-function ValidationError({ error }) {
-  return error ? <p className="text-red-500">{error}</p> : null;
-}
-
-export default function SignInPage() {
-  const {
-    statusMessage,
-    processing,
-    validationErrors,
-    handleSubmit,
-  } = useSignIn();
+    return result;
+  }
+  
+  const { statusMessage, processing, validationErrors, handleSubmit } = useAuthForm(SignInSchema, submitForm);
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4 text-center">
-        Sign In
-      </h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">Sign In</h1>
       <form onSubmit={handleSubmit} className="flex flex-col items-center rounded max-w-[400px] mx-auto space-y-4">
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          className="w-full border rounded h-10 px-3"
-          required
-        />
-        <ValidationError error={validationErrors.email} />
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          className="w-full border rounded h-10 px-3"
-          required
-        />
-        <ValidationError error={validationErrors.password} />
-
-        <button
-          type="submit"
-          className={`w-full font-bold py-2 px-4 rounded ${processing ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 text-white'}`}
-          disabled={processing}
-        >
-          Sign In
-        </button>
-
+        <FormInput name="email" type="email" placeholder="Email" validationError={validationErrors.email} />
+        <FormInput name="password" type="password" placeholder="Password" validationError={validationErrors.password} />
+        <FormButton label="Sign In" processing={processing} />
         <StatusMessage message={statusMessage} />
       </form>
 
