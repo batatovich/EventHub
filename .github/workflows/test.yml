@@ -1,0 +1,57 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: myapp_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: server/package-lock.json # Point to the correct lock file location
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: server  # Run npm commands in the server directory
+
+      - name: Set up test environment
+        run: |
+          echo "DATABASE_URL=postgres://postgres:password@localhost:5432/myapp_test" > .env.test
+        working-directory: server
+
+      - name: Run migrations
+        run: npx prisma migrate deploy
+        working-directory: server
+
+      - name: Run tests
+        env:
+          DATABASE_URL: postgres://postgres:password@localhost:5432/myapp_test
+        run: npm test
+        working-directory: server
