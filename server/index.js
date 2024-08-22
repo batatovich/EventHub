@@ -14,8 +14,16 @@ if (config.SHOULD_FORK && cluster.isMaster) {
   }
 
   cluster.on('exit', (worker, code, signal) => {
-    console.log(`Worker ${worker.process.pid} died, forking a new worker`);
-    cluster.fork();
+    if (code !== 0) {
+      console.error(`Worker ${worker.process.pid} exited with error code ${code}`);
+    } else if (signal) {
+      console.log(`Worker ${worker.process.pid} was killed by signal ${signal}`);
+    } else {
+      console.log(`Worker ${worker.process.pid} exited successfully.`);
+    }
+
+    console.log(`Forking a new worker...`);
+    cluster.fork(); // Replace the dead worker with a new one
   });
 
 } else {
