@@ -1,13 +1,13 @@
-
 const resolvers = {
   Query: {
-    me: async () => {
-      // Bypass authentication check for testing
-      return {
-        id: '123',
-        email: 'test@example.com',
-        createdAt: new Date().toISOString(),
-      };
+    myEvents: async (_, __, context) => {
+      const { userId } = context;
+      if (!userId) {
+        throw new Error('Unauthorized');
+      }
+      return await prisma.event.findMany({
+        where: { creatorId: userId },
+      });
     },
   },
 };
