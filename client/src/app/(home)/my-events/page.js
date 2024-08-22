@@ -1,13 +1,22 @@
 'use client';
 
-import React from 'react';
-import CreateEventButton from '@/components/home/CreateEventButton';
-import EventCard from '@/components/home/EventCard';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useQuery } from '@apollo/client';
 import { GET_MY_EVENTS } from '@/lib/graphql/queries';
+import CreateEventButton from '@/components/home/CreateEventButton';
+import EventCard from '@/components/home/EventCard';
 
 export default function MyEventsPage() {
+  const router = useRouter();
   const { loading, error, data, refetch } = useQuery(GET_MY_EVENTS);
+
+  useEffect(() => {
+    // Handle network errors like 401 Unauthorized
+    if (error && error.networkError && error.networkError.statusCode === 401) {
+      router.push('/signin'); // Redirect to the sign-in page if unauthorized
+    }
+  }, [error, router]);
 
   if (loading) return (
     <div className="flex justify-center items-center h-48">
@@ -17,7 +26,7 @@ export default function MyEventsPage() {
     </div>
   );
 
-  if (error) return (
+  if (error && error.networkError && error.networkError.statusCode !== 401) return (
     <div className="flex justify-center items-center h-48">
       <p className="text-lg font-medium text-red-600">
         Error fetching events: {error.message}
@@ -32,7 +41,6 @@ export default function MyEventsPage() {
   };
 
   const handleDeleteEvent = async (eventId) => {
-    // Implement the logic for deleting the event
     try {
       // Your delete event logic here
       await refetch(); // Refresh the events list after deletion

@@ -18,17 +18,18 @@ export default function SignInPage() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
+      credentials: 'include',
     });
-
+    
     const result = await response.json();
 
     if (!result.error) {
-      router.push('/dashboard');
+      router.push('/my-events');
     }
 
     return result;
   }
-  
+
   const { statusMessage, processing, validationErrors, handleSubmit } = useAuthForm(SignInSchema, submitForm);
 
   return (
