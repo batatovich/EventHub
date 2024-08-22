@@ -39,19 +39,10 @@ jobs:
         run: npm ci
         working-directory: server
 
-      - name: Set up and source environment variables
-        run: |
-          echo "DATABASE_URL=postgres://postgres:password@localhost:5432/myapp_test" > .env.test
-        working-directory: server
-
-      - name: Debug environment file
-        run: cat .env.test
-        working-directory: server
-
       - name: Run migrations
-        run: |
-          source .env.test
-          npx prisma migrate deploy
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgres://postgres:password@localhost:5432/myapp_test
         working-directory: server
 
       - name: Run tests
