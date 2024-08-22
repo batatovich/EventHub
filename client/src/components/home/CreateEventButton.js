@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import CreateEventModal from '@/components/createEventModal';
+//import CreateEventModal from '@/components/createEventModal';
 import Button from './Button';
 
 export default function CreateEventButton({ refetch }) {
@@ -17,7 +17,6 @@ export default function CreateEventButton({ refetch }) {
         color="bg-blue-500 hover:bg-blue-600"
         onClick={openModal}
       />
-      {isModalOpen && <CreateEventModal onClose={closeModal} refetch={refetch} />}
     </>
   );
 }
