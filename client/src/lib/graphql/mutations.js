@@ -27,3 +27,9 @@ export const CREATE_EVENT = gql`
     }
   }
 `;
+
+export const DELETE_EVENT = gql`
+  mutation DeleteEvent($id: ID!) {
+    deleteEvent(id: $id)
+  }
+`;

@@ -31,6 +31,27 @@ const resolvers = {
         },
       });
     },
+    deleteEvent: async (_, { id }, context) => {
+      const { userId, prisma } = context;
+
+      if (!userId) {
+        throw new Error('Unauthorized');
+      }
+
+      const event = await prisma.event.findUnique({
+        where: { id },
+      });
+
+      if (!event || event.creatorId !== userId) {
+        throw new Error('There was a problem deleting the event.');
+      }
+
+      await prisma.event.delete({
+        where: { id },
+      });
+
+      return true;
+    },
   },
 };
 
