@@ -1,19 +1,19 @@
 const typeDefs = `#graphql
-  type User {
-    id: ID!
-    email: String!
-    createdAt: String!
-    updatedAt: String!
-  }
-
   type Query {
-    me: User
+    myEvents: [Event!]!
   }
 
-  type Mutation {
-    signUp(email: String!, password: String!): User
-    signIn(email: String!, password: String!): String! # Returns a JWT token
+  type Event {
+    id: ID!
+    name: String!
+    description: String!
+    location: String!
+    date: DateTime!
+    capacity: Int!
+    fee: Float!
   }
+
+  scalar DateTime
 `;
 
 module.exports = typeDefs;
