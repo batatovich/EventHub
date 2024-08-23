@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { useApolloClient } from '@apollo/client';
-import Header from '@/components/Header'; // Update this path based on your project structure
+import Header from '@/components/Header'; 
 
 const Navbar = () => {
     const client = useApolloClient();
@@ -15,11 +15,12 @@ const Navbar = () => {
         event.preventDefault();
 
         try {
-            const response = await fetch('/api/auth/signout', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signout`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                }
+                },
+                credentials: 'include',
             });
 
             if (response.ok) {

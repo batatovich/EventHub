@@ -30,7 +30,7 @@ async function setupServer({ prisma, authenticate, createApolloServer }) {
             expressMiddleware(apolloServer, {
                 context: async ({ req }) => {
                     const userId = await getUserIdFromSession(req);
-                    return { userId };
+                    return { userId, prisma };
                 },
             })
         );
