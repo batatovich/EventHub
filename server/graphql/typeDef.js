@@ -3,6 +3,10 @@ const typeDefs = `#graphql
     myEvents: [Event!]!
   }
 
+  type Mutation {
+    createEvent(name: String!, description: String!, location: String!, date: DateTime!, capacity: Int!, fee: Float!): Event
+  }
+
   type Event {
     id: ID!
     name: String!

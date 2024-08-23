@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useQuery } from '@apollo/client';
 import { GET_MY_EVENTS } from '@/lib/graphql/queries';
 import CreateEventButton from '@/components/home/CreateEventButton';
@@ -9,12 +8,6 @@ import EventCard from '@/components/home/EventCard';
 
 export default function MyEventsPage() {
     const { loading, error, data, refetch } = useQuery(GET_MY_EVENTS);
-
-    if (error) {
-        console.error('Apollo Error:', error);
-        console.error('GraphQL Errors:', error.graphQLErrors);
-        console.error('Network Error:', error.networkError);
-      }
 
     if (loading) return (
         <div className="flex justify-center items-center h-48">
