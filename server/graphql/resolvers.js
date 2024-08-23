@@ -33,7 +33,7 @@ const resolvers = {
     },
     deleteEvent: async (_, { id }, context) => {
       const { userId, prisma } = context;
-
+      //WHAT HAPPENS IF THE 
       if (!userId) {
         throw new Error('Unauthorized');
       }

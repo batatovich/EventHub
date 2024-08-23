@@ -1,24 +1,13 @@
 'use client';
 
 import React from 'react';
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { GET_MY_EVENTS } from '@/lib/graphql/queries';
 import CreateEventButton from '@/components/home/CreateEventButton';
 import EventCard from '@/components/home/EventCard';
-import { DELETE_EVENT } from '@/lib/graphql/mutations';
-
 
 export default function MyEventsPage() {
     const { loading, error, data, refetch } = useQuery(GET_MY_EVENTS);
-
-    const [deleteEvent] = useMutation(DELETE_EVENT, {
-        onCompleted: () => {
-          refetch();
-        },
-        onError: (error) => {
-          console.error('Error deleting event:', error);
-        },
-      });
 
     if (loading) return (
         <div className="flex justify-center items-center h-48">
@@ -38,20 +27,6 @@ export default function MyEventsPage() {
 
     const events = data?.myEvents || [];
 
-    const handleReviewApplications = (eventId) => {
-        // Implement the logic for reviewing applications
-    };
-
-    const handleDeleteEvent = async (eventId) => {
-        try {
-            await deleteEvent({
-                variables: { id: eventId },
-            }); 
-        } catch (error) {
-            console.error('Error deleting event:', error);
-        }
-    };
-
     return (
         <div className="container mx-auto p-4">
             <div className="flex justify-between items-center mb-4">
@@ -64,8 +39,7 @@ export default function MyEventsPage() {
                         <EventCard
                             key={event.id}
                             event={event}
-                            onReviewApplications={() => handleReviewApplications(event.id)}
-                            onDeleteEvent={() => handleDeleteEvent(event.id)}
+                            refetch={refetch} 
                         />
                     ))}
                 </div>

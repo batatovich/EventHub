@@ -1,12 +1,12 @@
 import ActionsButton from '@/components/home/ActionsButton';
 
-export default function EventCard({ event, onDeleteEvent, onReviewApplications }) {
+export default function EventCard({ event, refetch }) {
     return (
         <div className="bg-white border border-gray-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 relative">
             <div className="absolute top-2 right-2 flex space-x-2">
                 <ActionsButton
-                    onReviewApplications={onReviewApplications}
-                    onDeleteEvent={onDeleteEvent}
+                    eventId={event.id}
+                    refetch={refetch}
                 />
             </div>
             <h2 className="text-2xl font-bold mb-2 text-purple-700 mt-8">{event.name}</h2>
