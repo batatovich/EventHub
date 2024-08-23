@@ -13,7 +13,7 @@ async function authenticate(req, res, next) {
   const session = await decrypt(sessionCookie);
 
   if (!session?.userId) {
-    return res.redirect('/signin');
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   next();

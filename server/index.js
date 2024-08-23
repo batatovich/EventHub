@@ -5,17 +5,25 @@ const prisma = require('./prisma-client');
 const authenticate = require('./services/authMiddleware');
 const createApolloServer = require('./apollo-server');
 const gracefulShutdown = require('./services/shutdown-server');
+require('dotenv').config();
+
 
 if (config.SHOULD_FORK && cluster.isMaster) {
-  console.log(`Master ${process.pid} is running`);
-
   for (let i = 0; i < config.MAX_FORKS; i++) {
     cluster.fork();
   }
 
   cluster.on('exit', (worker, code, signal) => {
-    console.log(`Worker ${worker.process.pid} died, forking a new worker`);
-    cluster.fork();
+    if (code !== 0) {
+      console.error(`Worker ${worker.process.pid} exited with error code ${code}`);
+    } else if (signal) {
+      console.log(`Worker ${worker.process.pid} was killed by signal ${signal}`);
+    } else {
+      console.log(`Worker ${worker.process.pid} exited successfully.`);
+    }
+
+    console.log(`Forking a new worker...`);
+    cluster.fork(); // Replace the dead worker with a new one
   });
 
 } else {

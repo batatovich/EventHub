@@ -1,15 +1,29 @@
 const os = require('os');
-const CLIENT_PORT = 3000;
+require('dotenv').config();
+
+const CLIENT_PORT = process.env.CLIENT_PORT || 3000;
+const SERVER_PORT = process.env.PORT || 3001;
+
 const config = {
-    SERVER_PORT: process.env.PORT || 3001,
+    SERVER_PORT: SERVER_PORT,
     CLIENT_PORT: CLIENT_PORT,
     CORS_ORIGIN: [
         `http://127.0.0.1:${CLIENT_PORT}`,
         `http://localhost:${CLIENT_PORT}`,
-        'https://your-app.vercel.app',      // Replace with vercel domain
+        process.env.VERCEL_URL || 'https://your-app.vercel.app', 
     ],
-    SHOULD_FORK: true, 
-    MAX_FORKS: Math.min(4, os.cpus().length), 
+    CORS_OPTIONS: {
+        origin: function (origin, callback) {
+            if (config.CORS_ORIGIN.indexOf(origin) !== -1 || !origin) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
+        credentials: true,
+    },
+    SHOULD_FORK: process.env.SHOULD_FORK === 'true', 
+    MAX_FORKS: parseInt(process.env.MAX_FORKS, 10) || Math.min(4, os.cpus().length), 
 };
 
 module.exports = config;

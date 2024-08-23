@@ -57,7 +57,6 @@ function deleteSession(req, res) {
 async function getUserIdFromSession(req) {
   try {
     const sessionCookie = req.cookies.session;
-
     if (!sessionCookie) {
       throw new Error('Session cookie not found');
     }
