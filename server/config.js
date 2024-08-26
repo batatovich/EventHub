@@ -2,7 +2,7 @@ const os = require('os');
 require('dotenv').config();
 
 const CLIENT_PORT = process.env.CLIENT_PORT || 3000;
-const SERVER_PORT = process.env.PORT || 3001;
+const SERVER_PORT = process.env.SERVER_PORT || 3001;
 
 const config = {
     SERVER_PORT: SERVER_PORT,
@@ -10,7 +10,7 @@ const config = {
     CORS_ORIGIN: [
         `http://127.0.0.1:${CLIENT_PORT}`,
         `http://localhost:${CLIENT_PORT}`,
-        process.env.VERCEL_URL || 'https://your-app.vercel.app', 
+        process.env.VERCEL_URL || 'https://event-hub-livid.vercel.app', 
     ],
     CORS_OPTIONS: {
         origin: function (origin, callback) {
