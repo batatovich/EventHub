@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import CreateEventModal from '@/components/home/CreateEventModal';
+import CreateEventModal from '@/components/home/my-events/CreateEventModal';
 
-const CreateEventButton = ({ refetch }) => {
+const CreateEventButton = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
@@ -17,7 +17,7 @@ const CreateEventButton = ({ refetch }) => {
       >
         Create Event
       </button>
-      {isModalOpen && <CreateEventModal onClose={closeModal} refetch={refetch} />}
+      {isModalOpen && <CreateEventModal onClose={closeModal} />}
     </>
   );
 };

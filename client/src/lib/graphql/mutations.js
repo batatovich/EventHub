@@ -33,3 +33,20 @@ export const DELETE_EVENT = gql`
     deleteEvent(id: $id)
   }
 `;
+
+export const APPLY_TO_EVENT = gql`
+  mutation ApplyToEvent($eventId: ID!) {
+    applyToEvent(eventId: $eventId) {
+      id
+      status
+      eventId
+      userId
+    }
+  }
+`;
+
+export const CANCEL_APPLICATION = gql`
+  mutation CancelApplication($eventId: ID!) {
+    cancelApplication(eventId: $eventId)
+  }
+`;

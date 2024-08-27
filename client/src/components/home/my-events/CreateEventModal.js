@@ -4,9 +4,11 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { CREATE_EVENT } from '@/lib/graphql/mutations';
 import { CreateEventSchema } from '@/lib/validation-schemas';
-import FormInput from '@/components/home/EventFormInput';
+import FormInput from '@/components/home/my-events/EventFormInput';
+import { useRefetch } from '@/lib/refetchContext';
 
-const CreateEventModal = ({ onClose, refetch }) => {
+const CreateEventModal = ({ onClose }) => {
+    const refetch = useRefetch();
     const [validationErrors, setValidationErrors] = useState({});
     const [formData, setFormData] = useState({
         name: '',

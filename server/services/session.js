@@ -38,7 +38,7 @@ async function createSession(req, res, userId) {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // Ensure cookies are secure in production
     expires: new Date(expiresAt * 1000),
-    sameSite: 'None',
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Strict',
     path: '/',
   });
 }
@@ -48,7 +48,7 @@ function deleteSession(req, res) {
   res.clearCookie('session', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'None',
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Strict',
     path: '/',
   });
 }
