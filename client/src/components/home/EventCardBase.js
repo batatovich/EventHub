@@ -34,8 +34,8 @@ export default function EventCardBase({ event, actions, showApplicationStatus })
                     <p>{new Date(event.date).toLocaleDateString()}</p>
                 </div>
                 <div>
-                    <p className="font-semibold">Capacity:</p>
-                    <p>{event.capacity}</p>
+                    <p className="font-semibold">Attendance:</p>
+                    <p> {event.attendance}/{event.capacity}</p>
                 </div>
                 <div>
                     <p className="font-semibold">Fee:</p>

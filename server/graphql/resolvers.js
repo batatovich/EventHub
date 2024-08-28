@@ -1,4 +1,16 @@
 const resolvers = {
+  Event: {
+    attendance: async (parent, __, context) => {
+      const { prisma } = context;
+      const acceptedCount = await prisma.application.count({
+        where: {
+          eventId: parent.id,
+          status: 'ACCEPTED',
+        },
+      });
+      return acceptedCount;
+    },
+  },
   Query: {
     myEvents: async (_, __, context) => {
 

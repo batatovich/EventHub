@@ -21,6 +21,7 @@ const typeDefs = `#graphql
     date: DateTime!
     capacity: Int!
     fee: Float!
+    attendance: Int!
     applications: [Application]
     applicationStatus: [Application] 
   }

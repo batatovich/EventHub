@@ -10,6 +10,7 @@ export const GET_MY_EVENTS = gql`
       date
       capacity
       fee
+      attendance
     }
   }
 `;
@@ -24,6 +25,7 @@ export const GET_OTHERS_EVENTS = gql`
       date
       capacity
       fee
+      attendance
       applicationStatus {
         status
       }
