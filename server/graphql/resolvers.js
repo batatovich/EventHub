@@ -173,7 +173,7 @@ const resolvers = {
       }
 
       // Update the status of the application
-      const updatedApplication = await prisma.application.update({
+      await prisma.application.update({
         where: { id },
         data: { status },
       });
