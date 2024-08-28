@@ -11,12 +11,13 @@ const resolvers = {
       });
     },
     othersEvents: async (_, __, context) => {
-
       const { userId, prisma } = context;
+
       if (!userId) {
         throw new Error('Unauthorized');
       }
-      return await prisma.event.findMany({
+
+      const events = await prisma.event.findMany({
         where: { creatorId: { not: userId } },
         include: {
           applications: {
@@ -25,7 +26,13 @@ const resolvers = {
           },
         },
       });
-    },
+
+      return events.map(event => ({
+        ...event,
+        applicationStatus: event.applications.length > 0 ? event.applications : null,
+      }));
+    }
+    ,
   },
   Mutation: {
     createEvent: async (_, { name, description, location, date, capacity, fee }, context) => {

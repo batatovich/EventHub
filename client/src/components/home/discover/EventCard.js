@@ -11,7 +11,7 @@ export default function EventCard({ event }) {
             actions={
                 <ActionsButton event={event} />
             }
-            applicationStatus={event.applicationStatus} 
+            showApplicationStatus={true} 
         />
     );
 }

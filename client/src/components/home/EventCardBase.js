@@ -3,11 +3,15 @@
 import React from 'react';
 import ApplicationStatus from '@/components/home/discover/ApplicationStatus';
 
-export default function EventCardBase({ event, actions, applicationStatus }) {
+export default function EventCardBase({ event, actions, showApplicationStatus }) {
+    let applicationStatus;
+    if (showApplicationStatus) {
+        applicationStatus = event.applicationStatus?.[0].status;
+    }
     return (
         <div className="bg-white border border-gray-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 relative">
             <div className="absolute top-2 right-2 flex space-x-2 items-center">
-                {applicationStatus !== undefined && (
+                {showApplicationStatus && (
                     applicationStatus ? (
                         <ApplicationStatus status={applicationStatus} />
                     ) : (
