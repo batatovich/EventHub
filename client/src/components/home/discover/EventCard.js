@@ -8,10 +8,8 @@ export default function EventCard({ event }) {
     return (
         <EventCardBase
             event={event}
-            actions={
-                <ActionsButton event={event} />
-            }
-            showApplicationStatus={true} 
+            actions={<ActionsButton event={event} />}
+            showApplicationStatus={true}
         />
     );
 }

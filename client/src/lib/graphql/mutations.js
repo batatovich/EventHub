@@ -39,8 +39,6 @@ export const APPLY_TO_EVENT = gql`
     applyToEvent(eventId: $eventId) {
       id
       status
-      eventId
-      userId
     }
   }
 `;
@@ -48,5 +46,11 @@ export const APPLY_TO_EVENT = gql`
 export const CANCEL_APPLICATION = gql`
   mutation CancelApplication($eventId: ID!) {
     cancelApplication(eventId: $eventId)
+  }
+`;
+
+export const UPDATE_APPLICATION_STATUS = gql`
+  mutation UpdateApplicationStatus($id: ID!, $status: ApplicationStatus!) {
+    updateApplicationStatus(id: $id, status: $status) 
   }
 `;
