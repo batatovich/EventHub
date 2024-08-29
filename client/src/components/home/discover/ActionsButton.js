@@ -12,6 +12,7 @@ export default function ActionsButton({ event }) {
 
     const applicationStatus = event?.applicationStatus?.[0]?.status || null;
     const hasApplied = applicationStatus === 'PENDING' || applicationStatus === 'ACCEPTED';
+    const isFullyBooked = event.attendance >= event.capacity;
 
     // Mutation to apply to the event
     const [applyToEvent] = useMutation(APPLY_TO_EVENT, {
@@ -52,14 +53,15 @@ export default function ActionsButton({ event }) {
         <ActionsButtonBase>
             {!hasApplied ? (
                 <button
-                    onClick={handleApplyToEvent} 
-                    className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    onClick={handleApplyToEvent}
+                    className={`block w-full text-left px-4 py-2 ${isFullyBooked ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-100'}`}
+                    disabled={isFullyBooked}
                 >
-                    Send Application
+                    {isFullyBooked ? 'Event Full' : 'Send Application'}
                 </button>
             ) : (
                 <button
-                    onClick={handleCancelApplication}  
+                    onClick={handleCancelApplication}
                     className="block w-full text-left px-4 py-2 text-red-700 hover:bg-red-100"
                 >
                     Cancel Application
