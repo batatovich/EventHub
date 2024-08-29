@@ -8,12 +8,17 @@ export default function EventCardBase({ event, actions, showApplicationStatus })
     if (showApplicationStatus) {
         applicationStatus = event.applicationStatus?.[0].status;
     }
+    const isFullyBooked = event.attendance >= event.capacity;
     return (
         <div className="bg-white border border-gray-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 relative">
             <div className="absolute top-2 right-2 flex space-x-2 items-center">
                 {showApplicationStatus && (
                     applicationStatus ? (
                         <ApplicationStatus status={applicationStatus} />
+                    ) : isFullyBooked ? (
+                        <span className="text-sm bg-orange-100 text-orange-800 font-bold px-2 py-1 rounded">
+                            Event full!
+                        </span>
                     ) : (
                         <span className="text-sm bg-blue-100 text-blue-800 font-bold px-2 py-1 rounded">
                             Apply Now!
