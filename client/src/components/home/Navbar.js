@@ -5,11 +5,25 @@ import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { useApolloClient } from '@apollo/client';
-import Header from '@/components/Header'; 
+import Header from '@/components/Header';
+import { getUserLangFromCookie } from '@/lib/helpers/getUserLang'; 
 
 const Navbar = () => {
     const client = useApolloClient();
     const router = useRouter();
+    const [userLang, setUserLang] = React.useState('en'); 
+    const [translations, setTranslations] = React.useState({});
+
+    React.useEffect(() => {
+        // Set the language based on the user's cookie
+        const lang = getUserLangFromCookie();
+        setUserLang(lang);
+        
+        // Dynamically import the translations based on the userLang
+        import(`@/locales/${lang}/navbar`).then((module) => {
+            setTranslations(module.default);
+        });
+    }, []);
 
     const handleSignOut = async (event) => {
         event.preventDefault();
@@ -25,7 +39,7 @@ const Navbar = () => {
 
             if (response.ok) {
                 client.clearStore();
-                router.push('/signin');
+                router.push(`/${userLang}/signin`);
             } else {
                 console.error('Sign-out failed');
             }
@@ -37,9 +51,8 @@ const Navbar = () => {
     const pathname = usePathname();
 
     const navItems = [
-        { name: 'Dashboard', path: '/dashboard' },
-        { name: 'My Events', path: '/my-events' },
-        { name: 'Discover', path: '/discover' },
+        { name: translations.myEvents, path: '/my-events' },
+        { name: translations.discover, path: '/discover' },
     ];
 
     return (
@@ -47,9 +60,9 @@ const Navbar = () => {
             <ul className="hidden md:flex gap-x-6 text-gray-800">
                 {navItems.map(item => (
                     <li key={item.path}>
-                        <Link href={item.path}>
+                        <Link href={`/${userLang}${item.path}`}>
                             <p
-                                className={`${pathname === item.path
+                                className={`${pathname === `/${userLang}${item.path}`
                                     ? 'font-bold text-gray-900 border-b-2 border-gray-900'
                                     : 'font-normal text-gray-600'
                                     } hover:text-gray-900 hover:border-b-2 hover:border-gray-900 transition-colors duration-200`}
@@ -64,7 +77,7 @@ const Navbar = () => {
                         onClick={handleSignOut}
                         className="text-gray-600 hover:text-gray-900 hover:border-b-2 hover:border-gray-900 transition-colors duration-200"
                     >
-                        Sign Out
+                        {translations.signOut}
                     </button>
                 </li>
             </ul>

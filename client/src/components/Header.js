@@ -1,4 +1,5 @@
 import React from 'react';
+import LocaleToggle from './LocaleToggle'; 
 
 const Header = ({ title, children }) => {
   return (
@@ -7,7 +8,10 @@ const Header = ({ title, children }) => {
         <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-blue-500">
           {title}
         </h1>
-        {children}
+        <div className="flex items-center space-x-4">
+          {children}
+          <LocaleToggle /> 
+        </div>
       </div>
     </header>
   );

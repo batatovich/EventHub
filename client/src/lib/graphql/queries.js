@@ -10,6 +10,37 @@ export const GET_MY_EVENTS = gql`
       date
       capacity
       fee
+      attendance
+    }
+  }
+`;
+
+export const GET_OTHERS_EVENTS = gql`
+  query GetOthersEvents {
+    othersEvents {
+      id
+      name
+      description
+      location
+      date
+      capacity
+      fee
+      attendance
+      applicationStatus {
+        status
+      }
+    }
+  }
+`;
+
+export const GET_EVENT_APPLICATIONS = gql`
+  query GET_EVENT_APPLICATIONS($eventId: ID!) {
+    eventApplications(eventId: $eventId) {
+      id
+      user {
+        email
+      }
+      status
     }
   }
 `;

@@ -4,9 +4,12 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { CREATE_EVENT } from '@/lib/graphql/mutations';
 import { CreateEventSchema } from '@/lib/validation-schemas';
-import FormInput from '@/components/home/EventFormInput';
+import FormInput from '@/components/home/my-events/EventFormInput';
+import { useRefetch } from '@/lib/refetchContext';
+import { getUserLangFromCookie } from '@/lib/helpers/getUserLang';
 
-const CreateEventModal = ({ onClose, refetch }) => {
+const CreateEventModal = ({ onClose }) => {
+    const refetch = useRefetch();
     const [validationErrors, setValidationErrors] = useState({});
     const [formData, setFormData] = useState({
         name: '',
@@ -17,6 +20,10 @@ const CreateEventModal = ({ onClose, refetch }) => {
         fee: '',
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const userLang = getUserLangFromCookie();
+
+    const translations = require(`@/locales/${userLang}/home/my-events`).default;
 
     const [createEvent, { loading, error }] = useMutation(CREATE_EVENT, {
         onCompleted: () => {
@@ -72,10 +79,10 @@ const CreateEventModal = ({ onClose, refetch }) => {
     return (
         <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative">
-                <h2 className="text-xl font-bold mb-4">Create Event</h2>
+                <h2 className="text-xl font-bold mb-4">{translations.createEvent}</h2>
                 <form onSubmit={handleSubmit}>
                     <FormInput
-                        label="Name"
+                        label={translations.name}
                         type="text"
                         name="name"
                         value={formData.name}
@@ -84,7 +91,7 @@ const CreateEventModal = ({ onClose, refetch }) => {
                         required
                     />
                     <FormInput
-                        label="Description"
+                        label={translations.description}
                         type="text"
                         name="description"
                         value={formData.description}
@@ -94,7 +101,7 @@ const CreateEventModal = ({ onClose, refetch }) => {
                     />
                     <div className="grid grid-cols-2 gap-4 mb-4">
                         <FormInput
-                            label="Location"
+                            label={translations.location}
                             type="text"
                             name="location"
                             value={formData.location}
@@ -103,7 +110,7 @@ const CreateEventModal = ({ onClose, refetch }) => {
                             required
                         />
                         <FormInput
-                            label="Date"
+                            label={translations.date}
                             type="datetime-local"
                             name="date"
                             value={formData.date}
@@ -114,7 +121,7 @@ const CreateEventModal = ({ onClose, refetch }) => {
                     </div>
                     <div className="grid grid-cols-2 gap-4 mb-4">
                         <FormInput
-                            label="Capacity"
+                            label={translations.capacity}
                             type="number"
                             name="capacity"
                             value={formData.capacity}
@@ -123,7 +130,7 @@ const CreateEventModal = ({ onClose, refetch }) => {
                             required
                         />
                         <FormInput
-                            label="Fee"
+                            label={translations.fee}
                             type="number"
                             step="0.01"
                             name="fee"
@@ -139,18 +146,18 @@ const CreateEventModal = ({ onClose, refetch }) => {
                             onClick={onClose}
                             className="bg-slate-100 hover:bg-slate-200 mr-2 px-4 py-2 rounded border"
                         >
-                            Cancel
+                            {translations.cancel}
                         </button>
                         <button
                             type="submit"
                             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded disabled:bg-slate-600"
                             disabled={loading || isSubmitting}
                         >
-                            {isSubmitting ? 'Creating...' : 'Create'}
+                            {isSubmitting ? translations.creating : translations.create}
                         </button>
                     </div>
                 </form>
-                {error && <p className="text-red-500 mt-2">Error creating event: {error.message}</p>}
+                {error && <p className="text-red-500 mt-2">{translations.errorCreatingEvent} {error.message}</p>}
             </div>
         </div>
     );

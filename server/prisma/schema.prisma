@@ -26,7 +26,7 @@ model Event {
   date         DateTime
   capacity     Int
   fee          Float
-  creator      User          @relation(fields: [creatorId], references: [id], name: "UserEvents")
+  creator      User          @relation(fields: [creatorId], references: [id], name: "UserEvents", onDelete: Cascade)
   creatorId    String
   applications Application[] @relation("EventApplications") // Applications for this event
 
@@ -38,7 +38,7 @@ model Application {
   id      String @id @default(cuid())
   status  String // 'pending', 'accepted', 'rejected'
   eventId String
-  event   Event  @relation(fields: [eventId], references: [id], name: "EventApplications")
+  event   Event  @relation(fields: [eventId], references: [id], name: "EventApplications", onDelete: Cascade)
   userId  String
   user    User   @relation(fields: [userId], references: [id])
 
