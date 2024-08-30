@@ -1,5 +1,5 @@
 import Header from '@/components/Header';
-import '../globals.css';
+import '../../globals.css';
 
 export default function AuthLayout({ children }) {
   return (
