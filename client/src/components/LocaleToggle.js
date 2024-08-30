@@ -3,17 +3,23 @@
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import React from 'react';
 
-export default function LanguageToggle() {
+export default function LocaleToggle() {
   const router = useRouter();
-  const pathname = usePathname(); 
-  const searchParams = useSearchParams(); 
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const toggleLocale = (newLocale) => {
+    // Update the cookie to remember the user's choice
+    document.cookie = `user-lang=${newLocale}; path=/`;
+
+    // Build the new pathname with the selected locale
     const newPathname = `/${newLocale}${pathname.replace(/^\/(en|es)/, '')}`;
 
+    // Preserve any search parameters in the URL
     const search = searchParams.toString();
     const fullPath = search ? `${newPathname}?${search}` : newPathname;
 
+    // Navigate to the new locale path
     router.push(fullPath);
   };
 
@@ -31,7 +37,7 @@ export default function LanguageToggle() {
       </button>
       <button
         onClick={() => toggleLocale('es')}
-        className={`px-3 py-1 text-sm rounded-l border border-gray-300 transition-colors duration-300  ${pathname.startsWith('/es')
+        className={`px-3 py-1 text-sm rounded-r border border-gray-300 transition-colors duration-300 ${pathname.startsWith('/es')
             ? 'bg-blue-500 text-white cursor-default opacity-50'
             : 'bg-gray-200 text-gray-700 hover:bg-blue-500 hover:text-white'
           }`}

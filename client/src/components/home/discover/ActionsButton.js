@@ -5,10 +5,13 @@ import ActionsButtonBase from '@/components/home/ActionsButtonBase';
 import { useMutation } from '@apollo/client';
 import { APPLY_TO_EVENT, CANCEL_APPLICATION } from '@/lib/graphql/mutations';
 import { useRefetch } from '@/lib/refetchContext';
-
+import { getUserLangFromCookie } from '@/lib/helpers/getUserLang';
 
 export default function ActionsButton({ event }) {
     const refetch = useRefetch();
+    const userLang = getUserLangFromCookie();
+
+    const translations = require(`@/locales/${userLang}/home/eventcard`).default;
 
     const applicationStatus = event?.applicationStatus?.[0]?.status || null;
     const hasApplied = applicationStatus === 'PENDING' || applicationStatus === 'ACCEPTED';
@@ -49,6 +52,7 @@ export default function ActionsButton({ event }) {
             console.error('Error applying to event:', error);
         }
     };
+    
     return (
         <ActionsButtonBase>
             {!hasApplied ? (
@@ -57,21 +61,21 @@ export default function ActionsButton({ event }) {
                     className={`block w-full text-left px-4 py-2 ${isFullyBooked ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-100'}`}
                     disabled={isFullyBooked}
                 >
-                    {isFullyBooked ? 'Event Full' : 'Send Application'}
+                    {isFullyBooked ? translations.eventFull : translations.sendApplication}
                 </button>
             ) : (
                 <button
                     onClick={handleCancelApplication}
                     className="block w-full text-left px-4 py-2 text-red-700 hover:bg-red-100"
                 >
-                    Cancel Application
+                    {translations.cancelApplication}
                 </button>
             )}
             <button
                 onClick={() => console.log('Application History clicked')}
                 className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
             >
-                Application History
+                {translations.applicationHistory}
             </button>
         </ActionsButtonBase>
     );
