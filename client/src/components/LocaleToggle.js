@@ -9,17 +9,12 @@ export default function LocaleToggle() {
   const searchParams = useSearchParams();
 
   const toggleLocale = (newLocale) => {
-    // Update the cookie to remember the user's choice
     document.cookie = `user-lang=${newLocale}; path=/`;
-
-    // Build the new pathname with the selected locale
     const newPathname = `/${newLocale}${pathname.replace(/^\/(en|es)/, '')}`;
 
-    // Preserve any search parameters in the URL
     const search = searchParams.toString();
     const fullPath = search ? `${newPathname}?${search}` : newPathname;
 
-    // Navigate to the new locale path
     router.push(fullPath);
   };
 
