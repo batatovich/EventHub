@@ -62,32 +62,9 @@ async function handleAuth(req) {
   return NextResponse.next();
 }
 
-function handleLocale(req) {
-  console.log('hi');
-  const pathname = req.nextUrl.pathname;
-  const cookieStore = cookies();
-  const userLang = cookieStore.get('user-lang');
-
-  // If no cookie is set, default to English
-  if (!userLang) {
-    return NextResponse.redirect(new URL(`/en${pathname}`, req.nextUrl));
-  }
-
-  // Check if the current pathname already starts with the preferred language
-  const currentLocale = pathname.split('/')[1]; // Get the first part of the path, e.g., 'en' or 'es'
-  if (currentLocale === userLang.value) {
-    // The path is already prefixed with the correct locale, no need to redirect
-    return NextResponse.next();
-  }
-
-  // Redirect to the user's preferred language
-  return NextResponse.redirect(new URL(`/${userLang.value}${pathname}`, req.nextUrl));
-}
-
 export default async function middleware(req) {
   let response;
   response = await handleAuth(req);
-  //response = handleLocale(req);
   return response;
 }
 
