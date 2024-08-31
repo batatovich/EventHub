@@ -12,8 +12,6 @@ import { getUserLangFromCookie } from '@/lib/helpers/getUserLang';
 
 export default function MyEventsPage() {
     const userLang = getUserLangFromCookie();
-
-    // Dynamically import the translations based on the userLang
     const translations = require(`@/locales/${userLang}/home/my-events`).default;
 
     const { loading, error, data, refetch } = useQuery(GET_MY_EVENTS);

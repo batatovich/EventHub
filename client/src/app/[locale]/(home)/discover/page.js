@@ -11,8 +11,6 @@ import { getUserLangFromCookie } from '@/lib/helpers/getUserLang';
 
 export default function DiscoverPage() {
     const userLang = getUserLangFromCookie();
-
-    // Dynamically import the translations based on the userLang and page-specific path
     const translations = require(`@/locales/${userLang}/home/discover`).default;
 
     const { loading, error, data, refetch } = useQuery(GET_OTHERS_EVENTS);

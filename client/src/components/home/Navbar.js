@@ -15,11 +15,9 @@ const Navbar = () => {
     const [translations, setTranslations] = React.useState({});
 
     React.useEffect(() => {
-        // Set the language based on the user's cookie
         const lang = getUserLangFromCookie();
         setUserLang(lang);
         
-        // Dynamically import the translations based on the userLang
         import(`@/locales/${lang}/navbar`).then((module) => {
             setTranslations(module.default);
         });
