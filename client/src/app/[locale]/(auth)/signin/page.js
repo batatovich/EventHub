@@ -28,7 +28,7 @@ export default function SignInPage() {
   }, [userLang]);
 
   if (!translations) {
-    return <LoadingIndicator/>; 
+    return <LoadingIndicator />;
   }
 
   async function submitForm(data) {

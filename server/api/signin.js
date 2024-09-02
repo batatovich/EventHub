@@ -25,10 +25,10 @@ const createSignInRoute = (prisma) => {
 
       await createSession(req, res, user.id);
 
-      res.status(200).json({ success: 'Signed in successfully!' });
+      return res.status(200).json({ success: 'Signed in successfully!' });
     } catch (error) {
       console.error('Error during sign in:', error);
-      res.status(500).json({ error: 'An unexpected error occurred.' });
+      return res.status(500).json({ error: 'An unexpected error occurred.' });
     }
   });
 

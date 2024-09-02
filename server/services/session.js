@@ -36,7 +36,7 @@ async function createSession(req, res, userId) {
 
   res.cookie('session', session, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // Ensure cookies are secure in production
+    secure: process.env.NODE_ENV === 'production',
     expires: new Date(expiresAt * 1000),
     sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Strict',
     path: '/',
