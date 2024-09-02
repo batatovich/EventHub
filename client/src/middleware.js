@@ -8,7 +8,7 @@ const publicRoutes = locales.flatMap(locale =>
   baseRoutes.map(route => `/${locale}${route}`)
 );
 
-async function handleAuth(req) {
+export default async function middleware(req) {
   const path = req.nextUrl.pathname;
   const isPublicRoute = publicRoutes.includes(path);
 
@@ -23,9 +23,8 @@ async function handleAuth(req) {
     return response;
   }
 
-  if (process.env.disableAuth) {// Check if the session cookie exists
+  if (process.env.enableAuth) {
     const sessionCookie = cookieStore.get('session');
-
     if (!isPublicRoute && sessionCookie) {
       try {
         // Make a request to the backend to validate the session
@@ -50,7 +49,6 @@ async function handleAuth(req) {
         return NextResponse.next();
 
       } catch (error) {
-        console.error('Session validation failed:', error);
         return NextResponse.redirect(new URL(`/${userLang}/signin`, req.nextUrl));
       }
     }
@@ -58,15 +56,11 @@ async function handleAuth(req) {
     if (!isPublicRoute && !sessionCookie) {
       return NextResponse.redirect(new URL(`/${userLang}/signin`, req.nextUrl));
     }
-  }
 
-  return NextResponse.next();
-}
+    return NextResponse.next();
+  };
 
-export default async function middleware(req) {
-  let response;
-  response = await handleAuth(req);
-  return response;
+  
 }
 
 export const config = {
