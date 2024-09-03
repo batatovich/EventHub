@@ -8,8 +8,8 @@ const config = {
     SERVER_PORT: SERVER_PORT,
     CLIENT_PORT: CLIENT_PORT,
     CORS_ORIGIN: [
-        `http://127.0.0.1:${CLIENT_PORT}`,
         `http://localhost:${CLIENT_PORT}`,
+        `https://localhost:${CLIENT_PORT}`,
         process.env.VERCEL_URL || 'https://event-hub-livid.vercel.app', 
     ],
     CORS_OPTIONS: {

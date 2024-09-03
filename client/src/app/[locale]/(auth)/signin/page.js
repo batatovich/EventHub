@@ -39,6 +39,7 @@ export default function SignInPage() {
       },
       body: JSON.stringify(data),
       credentials: 'include',
+      cache: 'no-store' 
     });
 
     const result = await response.json();

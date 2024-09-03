@@ -1,11 +1,11 @@
+require('dotenv').config();
 const cluster = require('cluster');
-const setupServer = require('./setup-server');
 const config = require('./config');
 const prisma = require('./prisma-client');
-const authenticate = require('./services/authMiddleware');
+const setupServer = require('./setup-server');
 const createApolloServer = require('./apollo-server');
+const authenticate = require('./services/authMiddleware');
 const gracefulShutdown = require('./services/shutdown-server');
-require('dotenv').config();
 
 
 if (config.SHOULD_FORK && cluster.isMaster) {
