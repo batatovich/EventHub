@@ -10,7 +10,7 @@ const createValidateSessionRoute = require('./api/validate-session');
 const { expressMiddleware } = require('@apollo/server/express4');
 const { getUserIdFromSession } = require('./services/session');
 
-async function setupServer({ prisma, authenticate, createApolloServer }) {
+async function setupServer({ prisma, authMiddleware, createApolloServer }) {
     const app = express();
 
     const rollbar = new Rollbar({
@@ -26,8 +26,8 @@ async function setupServer({ prisma, authenticate, createApolloServer }) {
     app.use(rollbar.errorHandler());
 
     // Authentication middleware 
-    if (authenticate) {
-        app.use(authenticate);
+    if (authMiddleware) {
+        app.use(authMiddleware);
     }
 
     // Apollo Server 
@@ -45,10 +45,10 @@ async function setupServer({ prisma, authenticate, createApolloServer }) {
     }
 
     // Authentication routes
-    app.use('/api/auth/signup', createSignUpRoute(prisma));
-    app.use('/api/auth/signin', createSignInRoute(prisma));
-    app.use('/api/auth/signout', createSignOutRoute());
-    app.use('/api/auth/validate-session', createValidateSessionRoute());
+    app.use('/api/auth/signup', createSignUpRoute(prisma, rollbar));
+    app.use('/api/auth/signin', createSignInRoute(prisma, rollbar));
+    app.use('/api/auth/signout', createSignOutRoute(rollbar));
+    app.use('/api/auth/validate-session', createValidateSessionRoute(rollbar));
 
     return app;
 }

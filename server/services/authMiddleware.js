@@ -1,7 +1,7 @@
 const { decrypt } = require('./session'); 
 const publicRoutes = ['/api/auth/signin', '/api/auth/signup'];
 
-async function authenticate(req, res, next) {
+async function authMiddleware(req, res, next) {
   const path = req.path;
   const isPublicRoute = publicRoutes.includes(path);
 
@@ -19,4 +19,4 @@ async function authenticate(req, res, next) {
   next();
 }
 
-module.exports = authenticate;
+module.exports = authMiddleware;
