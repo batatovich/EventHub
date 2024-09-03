@@ -32,7 +32,7 @@ async function setupServer({ prisma, authMiddleware, createApolloServer }) {
 
     // Apollo Server 
     if (createApolloServer) {
-        const apolloServer = await createApolloServer();
+        const apolloServer = await createApolloServer({ rollbar });
         app.use(
             '/api/graphql',
             expressMiddleware(apolloServer, {
