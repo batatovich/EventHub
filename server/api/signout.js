@@ -12,7 +12,9 @@ const createSignOutRoute = (rollbar) => {
         data: { message: 'Signed out successfully!' }
       });
     } catch (error) {
-      rollbar.error('Error during sign out:', error);
+      if (rollbar) {
+        rollbar.error('Error during sign out:', error);
+      } 
       return res.status(500).json({
         status: 'error',
         message: 'An unexpected error occurred.',

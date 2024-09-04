@@ -14,7 +14,7 @@ describe('POST /api/auth/signout', () => {
     beforeAll(() => {
         // Setup the express app with the signout route
         app = express();
-        app.use('/api/auth/signout', createSignOutRoute());
+        app.use('/api/auth/signout', createSignOutRoute(null));
     });
 
     afterEach(() => {
@@ -29,21 +29,23 @@ describe('POST /api/auth/signout', () => {
             .post('/api/auth/signout');
 
         expect(response.statusCode).toBe(200);
-        expect(response.body.success).toBe('Signed out successfully!');
-        expect(deleteSession).toHaveBeenCalledTimes(1); 
+        expect(response.body.status).toBe('success');
+        expect(response.body.data.message).toBe('Signed out successfully!');
+        expect(deleteSession).toHaveBeenCalledTimes(1);
     });
 
     it('should handle errors during sign out', async () => {
         // Mock the deleteSession to throw an error
         deleteSession.mockImplementation(() => {
-            throw new Error('Failed to delete session');
+          throw new Error('Failed to delete session');
         });
-
-        const response = await request(app)
-            .post('/api/auth/signout');
-
+      
+        const response = await request(app).post('/api/auth/signout');
+      
         expect(response.statusCode).toBe(500);
-        expect(response.body.error).toBe('An unexpected error occurred.');
-        expect(deleteSession).toHaveBeenCalledTimes(1); 
-    });
+        expect(response.body.status).toBe('error');
+        expect(response.body.message).toBe('An unexpected error occurred.');
+        expect(deleteSession).toHaveBeenCalledTimes(1);
+      });
+      
 });

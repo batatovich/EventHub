@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const express = require('express');
 const { body, validationResult } = require('express-validator');
+const { PrismaClientKnownRequestError } = require('@prisma/client');
 
 const createSignUpRoute = (prisma, rollbar) => {
   const router = express.Router();
@@ -71,7 +72,7 @@ const createSignUpRoute = (prisma, rollbar) => {
           data: { message: 'User registered successfully!' }
         });
       } catch (error) {
-        if (error instanceof prisma.PrismaClientKnownRequestError) {
+        if (error instanceof PrismaClientKnownRequestError) {
           if (error.code === 'P2002') {
             return res.status(409).json({
               status: 'fail',
