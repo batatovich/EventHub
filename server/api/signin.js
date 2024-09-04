@@ -20,10 +20,10 @@ const createSignInRoute = (prisma, rollbar) => {
     async (req, res) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        const errorMessages = errors.array().map(err => err.msg).join('\n'); 
+        const errorMessages = errors.array().map(err => err.msg).join('\n');
         return res.status(400).json({
           status: 'fail',
-          data: {message: errorMessages} 
+          data: { message: errorMessages }
         });
       }
       const { email, password } = req.body;
@@ -56,6 +56,23 @@ const createSignInRoute = (prisma, rollbar) => {
           data: { message: 'Signed in successfully!' }
         });
       } catch (error) {
+        if (error instanceof prisma.PrismaClientKnownRequestError) {
+          const errorCode = parseInt(error.code.substring(1), 10); 
+          if (errorCode >= 1000 && errorCode < 2000) {
+            // Handle Prisma 1xxx errors (system issues)
+            return res.status(500).json({
+              status: 'error',
+              message: 'Database connection error.',
+              data: { error: error.message }
+            });
+          } else if (errorCode >= 2000 && errorCode < 3000) {
+            // Handle Prisma 2xxx errors (unlikely in sign-in but included for completeness)
+            return res.status(400).json({
+              status: 'fail',
+              data: { message: `Database validation error: ${error.message}` }
+            });
+          }
+        }
         rollbar.error('Error during sign in:', error);
         return res.status(500).json({
           status: 'error',

@@ -41,7 +41,7 @@ const Navbar = () => {
     const pathname = usePathname();
 
     if (!translations) {
-        return <LoadingIndicator message="..." />;
+        return
       }   
 
     const navItems = [

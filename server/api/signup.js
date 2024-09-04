@@ -33,10 +33,10 @@ const createSignUpRoute = (prisma, rollbar) => {
     async (req, res) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        const errorMessages = errors.array().map(err => err.msg).join('\n'); 
+        const errorMessages = errors.array().map(err => err.msg).join('\n');
         return res.status(400).json({
           status: 'fail',
-          data: {message: errorMessages} 
+          data: { message: errorMessages }
         });
       }
 
@@ -71,6 +71,31 @@ const createSignUpRoute = (prisma, rollbar) => {
           data: { message: 'User registered successfully!' }
         });
       } catch (error) {
+        if (error instanceof prisma.PrismaClientKnownRequestError) {
+          if (error.code === 'P2002') {
+            return res.status(409).json({
+              status: 'fail',
+              data: { message: 'This email is already registered. Please use another email.' }
+            });
+          }
+
+          // Distinguish between other Prisma 2xxx and 1xxx errors
+          const errorCode = parseInt(error.code.substring(1), 10); 
+          if (errorCode >= 2000 && errorCode < 3000) {
+            // Handle other Prisma 2xxx errors (data issues)
+            return res.status(400).json({
+              status: 'fail',
+              data: { message: `Database validation error: ${error.message}` }
+            });
+          } else if (errorCode >= 1000 && errorCode < 2000) {
+            // Handle Prisma 1xxx errors (system errors)
+            return res.status(500).json({
+              status: 'error',
+              message: 'Database connection error.',
+              data: { error: error.message }
+            });
+          }
+        }
         rollbar.error('Error during sign up:', error);
         return res.status(500).json({
           status: 'error',
