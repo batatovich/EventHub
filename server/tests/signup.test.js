@@ -1,4 +1,3 @@
-const bcrypt = require('bcrypt');
 const request = require('supertest');
 const prisma = require('../prisma-client');
 const setupServer = require('../express-server');
