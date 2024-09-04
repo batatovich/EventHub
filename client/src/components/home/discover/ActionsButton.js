@@ -1,17 +1,18 @@
 'use client';
 
 import React from 'react';
-import ActionsButtonBase from '@/components/home/ActionsButtonBase';
 import { useMutation } from '@apollo/client';
-import { APPLY_TO_EVENT, CANCEL_APPLICATION } from '@/lib/graphql/mutations';
 import { useRefetch } from '@/lib/refetchContext';
-import { getUserLangFromCookie } from '@/lib/helpers/getUserLang';
+import { useTranslations } from '@/lib/hooks/useTranslations';
+import LoadingIndicator from '@/components/home/LoadingIndicator';
+import ActionsButtonBase from '@/components/home/ActionsButtonBase';
+import { APPLY_TO_EVENT, CANCEL_APPLICATION } from '@/lib/graphql/mutations';
+
 
 export default function ActionsButton({ event }) {
     const refetch = useRefetch();
-    const userLang = getUserLangFromCookie();
 
-    const translations = require(`@/locales/${userLang}/home/eventcard`).default;
+    const translations = useTranslations('home/eventcard');
 
     const applicationStatus = event?.applicationStatus?.[0]?.status || null;
     const hasApplied = applicationStatus === 'PENDING' || applicationStatus === 'ACCEPTED';
@@ -52,6 +53,10 @@ export default function ActionsButton({ event }) {
             console.error('Error applying to event:', error);
         }
     };
+
+    if (!translations) {
+        return <LoadingIndicator />;
+    }
     
     return (
         <ActionsButtonBase>

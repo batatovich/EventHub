@@ -2,26 +2,18 @@
 
 import React from "react";
 import Link from "next/link";
+import Header from '@/components/Header';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { useApolloClient } from '@apollo/client';
-import Header from '@/components/Header';
-import { getUserLangFromCookie } from '@/lib/helpers/getUserLang'; 
+import LoadingIndicator from './LoadingIndicator';
+import { useTranslations } from '@/lib/hooks/useTranslations';
 
 const Navbar = () => {
     const client = useApolloClient();
     const router = useRouter();
-    const [userLang, setUserLang] = React.useState('en'); 
-    const [translations, setTranslations] = React.useState({});
-
-    React.useEffect(() => {
-        const lang = getUserLangFromCookie();
-        setUserLang(lang);
-        
-        import(`@/locales/${lang}/navbar`).then((module) => {
-            setTranslations(module.default);
-        });
-    }, []);
+  
+    const translations = useTranslations('navbar');
 
     const handleSignOut = async (event) => {
         event.preventDefault();
@@ -37,7 +29,7 @@ const Navbar = () => {
 
             if (response.ok) {
                 client.clearStore();
-                router.push(`/${userLang}/signin`);
+                router.push(`/${translations.lang}/signin`);
             } else {
                 console.error('Sign-out failed');
             }
@@ -48,19 +40,23 @@ const Navbar = () => {
 
     const pathname = usePathname();
 
+    if (!translations) {
+        return
+      }   
+
     const navItems = [
         { name: translations.myEvents, path: '/my-events' },
         { name: translations.discover, path: '/discover' },
-    ];
+    ]; 
 
     return (
         <Header title="EventHub">
             <ul className="hidden md:flex gap-x-6 text-gray-800">
                 {navItems.map(item => (
                     <li key={item.path}>
-                        <Link href={`/${userLang}${item.path}`}>
+                        <Link href={`/${translations.lang}${item.path}`}>
                             <p
-                                className={`${pathname === `/${userLang}${item.path}`
+                                className={`${pathname === `/${translations.lang}${item.path}`
                                     ? 'font-bold text-gray-900 border-b-2 border-gray-900'
                                     : 'font-normal text-gray-600'
                                     } hover:text-gray-900 hover:border-b-2 hover:border-gray-900 transition-colors duration-200`}

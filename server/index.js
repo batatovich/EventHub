@@ -1,11 +1,11 @@
+require('dotenv').config();
 const cluster = require('cluster');
-const setupServer = require('./setup-server');
 const config = require('./config');
 const prisma = require('./prisma-client');
-const authenticate = require('./services/authMiddleware');
+const setupServer = require('./express-server');
 const createApolloServer = require('./apollo-server');
+const authMiddleware = require('./services/authMiddleware');
 const gracefulShutdown = require('./services/shutdown-server');
-require('dotenv').config();
 
 
 if (config.SHOULD_FORK && cluster.isMaster) {
@@ -37,7 +37,7 @@ if (config.SHOULD_FORK && cluster.isMaster) {
       // Set up the server with dependency injection
       const app = await setupServer({
         prisma,                 // Inject Prisma client
-        authenticate,           // Inject authentication middleware
+        authMiddleware,           // Inject authentication middleware
         createApolloServer      // Inject Apollo server creation function
       });
 

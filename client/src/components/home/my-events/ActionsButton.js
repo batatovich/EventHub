@@ -1,19 +1,19 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRefetch } from '@/lib/refetchContext';
 import { useMutation } from '@apollo/client';
+import { useRefetch } from '@/lib/refetchContext';
 import { DELETE_EVENT } from '@/lib/graphql/mutations';
+import { useTranslations } from '@/lib/hooks/useTranslations';
+import LoadingIndicator from '@/components/home/LoadingIndicator';
 import ActionsButtonBase from '@/components/home/ActionsButtonBase';
 import ReviewApplicationsModal from '@/components/home/my-events/ReviewApplicationsModal'; 
-import { getUserLangFromCookie } from '@/lib/helpers/getUserLang';
 
 export default function ActionsButton({ eventId }) {
     const refetch = useRefetch();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const userLang = getUserLangFromCookie();
 
-    const translations = require(`@/locales/${userLang}/home/eventcard`).default;
+    const translations = useTranslations('home/eventcard');
 
     const [deleteEvent] = useMutation(DELETE_EVENT, {
         onCompleted: () => {
@@ -32,6 +32,10 @@ export default function ActionsButton({ eventId }) {
         }
     };
 
+    if (!translations) {
+        return <LoadingIndicator />;
+    }
+    
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 

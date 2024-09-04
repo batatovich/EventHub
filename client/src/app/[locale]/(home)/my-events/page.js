@@ -4,19 +4,20 @@ import React from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_MY_EVENTS } from '@/lib/graphql/queries';
 import { RefetchProvider } from '@/lib/refetchContext';
-import CreateEventButton from '@/components/home/my-events/CreateEventButton';
-import EventCard from '@/components/home/my-events/EventCard';
-import LoadingIndicator from '@/components/home/LoadingIndicator';
 import ErrorMessage from '@/components/home/ErrorMessage';
-import { getUserLangFromCookie } from '@/lib/helpers/getUserLang'; 
+import EventCard from '@/components/home/my-events/EventCard';
+import { useTranslations } from '@/lib/hooks/useTranslations';
+import LoadingIndicator from '@/components/home/LoadingIndicator';
+import CreateEventButton from '@/components/home/my-events/CreateEventButton';
 
 export default function MyEventsPage() {
-    const userLang = getUserLangFromCookie();
-    const translations = require(`@/locales/${userLang}/home/my-events`).default;
-
+    const translations = useTranslations('home/my-events');
+    
     const { loading, error, data, refetch } = useQuery(GET_MY_EVENTS);
 
-    if (loading) return <LoadingIndicator message={translations.loadingEvents} />;
+    if (!translations || loading) {
+        return <LoadingIndicator message='...' />;
+    }
 
     if (error && error.networkError && error.networkError.statusCode !== 401) {
         return <ErrorMessage message={translations.errorFetchingEvents} details={error.message} />;

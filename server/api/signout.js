@@ -1,17 +1,25 @@
 const express = require('express');
 const { deleteSession } = require('../services/session');
 
-const createSignOutRoute = () => {
+const createSignOutRoute = (rollbar) => {
   const router = express.Router();
 
   router.post('/', (req, res) => {
     try {
       deleteSession(req, res);
-
-      return res.status(200).json({ success: 'Signed out successfully!' });
+      return res.status(200).json({
+        status: 'success',
+        data: { message: 'Signed out successfully!' }
+      });
     } catch (error) {
-      console.error('Error during sign out:', error);
-      return res.status(500).json({ error: 'An unexpected error occurred.' });
+      if (rollbar) {
+        rollbar.error('Error during sign out:', error);
+      } 
+      return res.status(500).json({
+        status: 'error',
+        message: 'An unexpected error occurred.',
+        data: { error: error.message }
+      });
     }
   });
 

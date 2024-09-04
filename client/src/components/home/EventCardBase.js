@@ -1,15 +1,17 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from '@/lib/hooks/useTranslations';
+import LoadingIndicator from '@/components/home/LoadingIndicator';
 import ApplicationStatus from '@/components/home/discover/ApplicationStatus';
-import { getUserLangFromCookie } from '@/lib/helpers/getUserLang'; 
 
 export default function EventCardBase({ event, actions, showApplicationStatus }) {
-    const userLang = getUserLangFromCookie();
+    const translations = useTranslations('home/eventcard');
 
-    // Dynamically import the translations based on the userLang
-    const translations = require(`@/locales/${userLang}/home/eventcard`).default;
-
+    if (!translations) {
+        return <LoadingIndicator />;
+    }
+    
     let applicationStatus;
     if (showApplicationStatus) {
         applicationStatus = event.applicationStatus?.[0].status;
