@@ -9,7 +9,6 @@ import EventCard from '@/components/home/discover/EventCard';
 import { useTranslations } from '@/lib/hooks/useTranslations';
 import LoadingIndicator from '@/components/home/LoadingIndicator';
 
-
 export default function DiscoverPage() {
     const translations = useTranslations('home/discover');
 
