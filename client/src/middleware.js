@@ -45,25 +45,25 @@ export default async function middleware(req) {
         },
         credentials: 'include',
       });
-
-      if (sessionValidationResponse.status !== 200) {
-        return clearCookiesAndRedirect(req, userLang);
-      }
-
+  
       const result = await sessionValidationResponse.json();
-
-      if (!result.valid) {
+  
+      if (result.status === 'success') {
+        return NextResponse.next(); 
+      } else if (result.status === 'fail') {
+        console.error('Session validation failed:', result.data.message);
+        return clearCookiesAndRedirect(req, userLang);
+      } else if (result.status === 'error') {
+        console.error('Server error during session validation:', result.message);
         return clearCookiesAndRedirect(req, userLang);
       }
-
-      return NextResponse.next();
-
+  
     } catch (error) {
       console.error('Session validation error:', error);
-      return clearCookiesAndRedirect(req, userLang);
+      return clearCookiesAndRedirect(req, userLang); 
     }
   }
-
+  
   if (!isPublicRoute && !sessionCookie) {
     return clearCookiesAndRedirect(req, userLang);
   }

@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from '@/lib/hooks/useTranslations';
+import LoadingIndicator from '@/components/home/LoadingIndicator';
 import CreateEventModal from '@/components/home/my-events/CreateEventModal';
-import { getUserLangFromCookie } from '@/lib/helpers/getUserLang';
 
 const CreateEventButton = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -10,9 +11,12 @@ const CreateEventButton = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const userLang = getUserLangFromCookie();
-  const translations = require(`@/locales/${userLang}/home/my-events`).default;
-
+  const translations = useTranslations('home/my-events');
+  
+  if (!translations) {
+    return <LoadingIndicator />;
+  }
+  
   return (
     <>
       <button

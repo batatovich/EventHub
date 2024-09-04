@@ -2,23 +2,23 @@
 
 import React from 'react';
 import { useQuery } from '@apollo/client';
+import { RefetchProvider } from '@/lib/refetchContext';
+import ErrorMessage from '@/components/home/ErrorMessage';
 import { GET_OTHERS_EVENTS } from '@/lib/graphql/queries';
 import EventCard from '@/components/home/discover/EventCard';
+import { useTranslations } from '@/lib/hooks/useTranslations';
 import LoadingIndicator from '@/components/home/LoadingIndicator';
-import ErrorMessage from '@/components/home/ErrorMessage';
-import { RefetchProvider } from '@/lib/refetchContext';
-import { getUserLangFromCookie } from '@/lib/helpers/getUserLang';
+
 
 export default function DiscoverPage() {
-    const userLang = getUserLangFromCookie();
-
-    // Dynamically import the translations based on the userLang and page-specific path
-    const translations = require(`@/locales/${userLang}/home/discover`).default;
+    const translations = useTranslations('home/discover');
 
     const { loading, error, data, refetch } = useQuery(GET_OTHERS_EVENTS);
 
-    if (loading) return <LoadingIndicator />;
-
+    if (!translations || loading) {
+        return <LoadingIndicator message='...' />;
+    }
+    
     if (error) return <ErrorMessage message={`${translations.errorFetchingEvents}: ${error.message}`} />;
 
     const events = data?.othersEvents || [];

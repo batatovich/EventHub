@@ -1,19 +1,25 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { SignUpSchema } from '@/lib/validation-schemas';
 import { useAuthForm } from '@/lib/hooks/useAuthForm';
 import { FormInput } from '@/components/auth/FormInput';
+import { SignUpSchema } from '@/lib/validation-schemas';
 import { FormButton } from '@/components/auth/FormButton';
+import { useTranslations } from '@/lib/hooks/useTranslations';
 import { StatusMessage } from '@/components/auth/StatusMessage';
-import { getUserLangFromCookie } from '@/lib/helpers/getUserLang'; 
-import Link from 'next/link';
+import LoadingIndicator from '@/components/home/LoadingIndicator';
 
 export default function SignUpPage() {
   const router = useRouter();
-  const userLang = getUserLangFromCookie();
 
-  const translations = require(`@/locales/${userLang}/auth/signup`).default;
+  const { statusMessage, processing, validationErrors, handleSubmit } = useAuthForm(SignUpSchema, submitForm);
+
+  const translations =  useTranslations('auth/signup');
+   
+  if (!translations) {
+    return <LoadingIndicator />;
+  }
 
   async function submitForm(data) {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signup`, {
@@ -26,14 +32,12 @@ export default function SignUpPage() {
 
     const result = await response.json();
 
-    if (!result.error) {
-      router.push(`/${userLang}/signin`);   
-    }
+    if (result.status === 'success') {
+      router.push(`/${userLang}/signin`);
+    } 
 
     return result;
   }
-
-  const { statusMessage, processing, validationErrors, handleSubmit } = useAuthForm(SignUpSchema, submitForm);
 
   return (
     <div className="container mx-auto p-4">
@@ -48,7 +52,7 @@ export default function SignUpPage() {
 
       <p className="mt-4 text-center text-gray-600">
         {translations.alreadyHaveAccount}{' '}
-        <Link href={`/${userLang}/signin`} className="text-blue-500 hover:text-blue-700 font-bold">
+        <Link href={`/${translations.lang}/signin`} className="text-blue-500 hover:text-blue-700 font-bold">
           {translations.signIn}
         </Link>
       </p>

@@ -20,12 +20,12 @@ const createSignInRoute = (prisma, rollbar) => {
     async (req, res) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        const errorMessages = errors.array().map(err => err.msg).join('\n'); 
         return res.status(400).json({
           status: 'fail',
-          data: errors.array()
+          data: {message: errorMessages} 
         });
       }
-
       const { email, password } = req.body;
 
       try {

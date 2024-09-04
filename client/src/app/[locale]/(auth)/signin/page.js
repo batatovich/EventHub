@@ -2,33 +2,23 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { SignInSchema } from '@/lib/validation-schemas';
 import { useAuthForm } from '@/lib/hooks/useAuthForm';
 import { FormInput } from '@/components/auth/FormInput';
+import { SignInSchema } from '@/lib/validation-schemas';
 import { FormButton } from '@/components/auth/FormButton';
+import { useTranslations } from '@/lib/hooks/useTranslations';
 import { StatusMessage } from '@/components/auth/StatusMessage';
-import { getUserLangFromCookie } from '@/lib/helpers/getUserLang';
 import LoadingIndicator from '@/components/home/LoadingIndicator';
 
 export default function SignInPage() {
   const router = useRouter();
-  const [translations, setTranslations] = useState(null);
-  const userLang = getUserLangFromCookie();
 
   const { statusMessage, processing, validationErrors, handleSubmit } = useAuthForm(SignInSchema, submitForm);
 
-  useEffect(() => {
-    async function loadTranslations() {
-      const loadedTranslations = await import(`@/locales/${userLang}/auth/signin`);
-      setTranslations(loadedTranslations.default);
-    }
-
-    loadTranslations();
-  }, [userLang]);
-
+  const translations = useTranslations('auth/signin');
+  
   if (!translations) {
-    return <LoadingIndicator/>; 
+    return <LoadingIndicator />;
   }
 
   async function submitForm(data) {
@@ -39,13 +29,13 @@ export default function SignInPage() {
       },
       body: JSON.stringify(data),
       credentials: 'include',
-      cache: 'no-store' 
+      cache: 'no-store'
     });
 
     const result = await response.json();
 
-    if (!result.error) {
-      router.push(`/${userLang}/my-events`);
+    if (result.status === 'success') {
+      router.push(`/${translations.lang}/my-events`);
     }
 
     return result;
@@ -63,7 +53,7 @@ export default function SignInPage() {
 
       <p className="mt-4 text-center text-gray-600">
         {translations.dontHaveAccount}{' '}
-        <Link href={`/${userLang}/signup`} className="text-blue-500 hover:text-blue-700 font-bold">
+        <Link href={`/${translations.lang}/signup`} className="text-blue-500 hover:text-blue-700 font-bold">
           {translations.signUp}
         </Link>
       </p>

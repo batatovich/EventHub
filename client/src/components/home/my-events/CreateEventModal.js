@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
+import { useRefetch } from '@/lib/refetchContext';
 import { CREATE_EVENT } from '@/lib/graphql/mutations';
 import { CreateEventSchema } from '@/lib/validation-schemas';
+import { useTranslations } from '@/lib/hooks/useTranslations';
+import LoadingIndicator from '@/components/home/LoadingIndicator';
 import FormInput from '@/components/home/my-events/EventFormInput';
-import { useRefetch } from '@/lib/refetchContext';
-import { getUserLangFromCookie } from '@/lib/helpers/getUserLang';
 
 const CreateEventModal = ({ onClose }) => {
     const refetch = useRefetch();
@@ -21,10 +22,8 @@ const CreateEventModal = ({ onClose }) => {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const userLang = getUserLangFromCookie();
-
-    const translations = require(`@/locales/${userLang}/home/my-events`).default;
-
+    const translations = useTranslations('home/my-events');
+  
     const [createEvent, { loading, error }] = useMutation(CREATE_EVENT, {
         onCompleted: () => {
             setIsSubmitting(false);
@@ -75,6 +74,10 @@ const CreateEventModal = ({ onClose }) => {
             console.error('Unexpected error during validation:', validationError);
         }
     };
+
+    if (!translations) {
+        return <LoadingIndicator />;
+      }
 
     return (
         <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-50">
