@@ -33,7 +33,7 @@ export default function SignUpPage() {
     const result = await response.json();
 
     if (result.status === 'success') {
-      router.push(`/${userLang}/signin`);
+      router.push(`/${translations.lang}/signin`);
     } 
 
     return result;
