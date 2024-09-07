@@ -20,6 +20,7 @@ const config = {
                 callback(new Error('Not allowed by CORS'));
             }
         },
+        allowHeadesrs: ['Content-Type', 'Authorization'],
         credentials: true,
     },
     SHOULD_FORK: process.env.SHOULD_FORK === 'true', 

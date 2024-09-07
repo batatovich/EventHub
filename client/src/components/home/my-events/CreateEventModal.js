@@ -8,10 +8,15 @@ import { CreateEventSchema } from '@/lib/validation-schemas';
 import { useTranslations } from '@/lib/hooks/useTranslations';
 import LoadingIndicator from '@/components/home/LoadingIndicator';
 import FormInput from '@/components/home/my-events/EventFormInput';
+import handleApolloClientError from '@/lib/handleApolloClientError';
 
 const CreateEventModal = ({ onClose }) => {
+    const translations = useTranslations('home/my-events');
+
     const refetch = useRefetch();
+
     const [validationErrors, setValidationErrors] = useState({});
+
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -20,10 +25,10 @@ const CreateEventModal = ({ onClose }) => {
         capacity: '',
         fee: '',
     });
+
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const translations = useTranslations('home/my-events');
-  
+
     const [createEvent, { loading, error }] = useMutation(CREATE_EVENT, {
         onCompleted: () => {
             setIsSubmitting(false);
@@ -31,8 +36,7 @@ const CreateEventModal = ({ onClose }) => {
             refetch();
         },
         onError: (err) => {
-            setIsSubmitting(false);
-            console.error('Error creating event:', err);
+            handleApolloClientError(err);
         },
     });
 
@@ -44,7 +48,7 @@ const CreateEventModal = ({ onClose }) => {
         e.preventDefault();
 
         try {
-            await validateForm(formData);
+            await CreateEventSchema.validate(formData, { abortEarly: false });
             setIsSubmitting(true);
             await createEvent({
                 variables: {
@@ -57,10 +61,6 @@ const CreateEventModal = ({ onClose }) => {
         } catch (validationError) {
             handleValidationErrors(validationError);
         }
-    };
-
-    const validateForm = async (data) => {
-        await CreateEventSchema.validate(data, { abortEarly: false });
     };
 
     const handleValidationErrors = (validationError) => {
@@ -77,7 +77,7 @@ const CreateEventModal = ({ onClose }) => {
 
     if (!translations) {
         return <LoadingIndicator />;
-      }
+    }
 
     return (
         <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-50">
