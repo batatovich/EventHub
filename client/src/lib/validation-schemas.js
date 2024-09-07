@@ -40,6 +40,7 @@ const CreateEventSchema = Yup.object().shape({
         .required('Location is required'),
 
     date: Yup.date()
+        .min(new Date(), 'Date must be in the future')
         .required('Date is required'),
 
     capacity: Yup.number()

@@ -5,6 +5,7 @@ import LoadingIndicator from '../LoadingIndicator';
 import { useQuery, useMutation } from '@apollo/client';
 import { useTranslations } from '@/lib/hooks/useTranslations';
 import { GET_EVENT_APPLICATIONS } from '@/lib/graphql/queries';
+import handleApolloClientError from '@/lib/handleApolloClientError';
 import { UPDATE_APPLICATION_STATUS } from '@/lib/graphql/mutations';
 
 export default function ReviewApplicationsModal({ eventId, onClose }) {
@@ -16,6 +17,7 @@ export default function ReviewApplicationsModal({ eventId, onClose }) {
 
   const [updateApplicationStatus] = useMutation(UPDATE_APPLICATION_STATUS, {
     onCompleted: () => refetch(),
+    onError: (error) => handleApolloClientError(error),
   });
 
   const [activeTab, setActiveTab] = useState('PENDING');
