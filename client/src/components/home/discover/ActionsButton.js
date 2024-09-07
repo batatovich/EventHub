@@ -6,6 +6,7 @@ import { useRefetch } from '@/lib/refetchContext';
 import { useTranslations } from '@/lib/hooks/useTranslations';
 import LoadingIndicator from '@/components/home/LoadingIndicator';
 import ActionsButtonBase from '@/components/home/ActionsButtonBase';
+import handleApolloClientError from '@/lib/handleApolloClientError';
 import { APPLY_TO_EVENT, CANCEL_APPLICATION } from '@/lib/graphql/mutations';
 
 
@@ -18,51 +19,25 @@ export default function ActionsButton({ event }) {
     const hasApplied = applicationStatus === 'PENDING' || applicationStatus === 'ACCEPTED';
     const isFullyBooked = event.attendance >= event.capacity;
 
-    // Mutation to apply to the event
     const [applyToEvent] = useMutation(APPLY_TO_EVENT, {
-        onCompleted: () => {
-            refetch();
-        },
-        onError: (error) => {
-            console.error('Error applying to event:', error);
-        },
+        onCompleted: () => refetch(),
+        onError: (error) => handleApolloClientError(error),
     });
 
-    // Mutation to cancel the application
     const [cancelApplication] = useMutation(CANCEL_APPLICATION, {
-        onCompleted: () => {
-            refetch();
-        },
-        onError: (error) => {
-            console.error('Error canceling application:', error);
-        },
+        onCompleted: () => refetch(),
+        onError: (error) => handleApolloClientError(error),
     });
-
-    const handleApplyToEvent = async () => {
-        try {
-            await applyToEvent({ variables: { eventId: event.id } });
-        } catch (error) {
-            console.error('Error applying to event:', error);
-        }
-    };
-
-    const handleCancelApplication = async () => {
-        try {
-            await cancelApplication({ variables: { eventId: event.id } }); //
-        } catch (error) {
-            console.error('Error applying to event:', error);
-        }
-    };
 
     if (!translations) {
         return <LoadingIndicator />;
     }
-    
+
     return (
         <ActionsButtonBase>
             {!hasApplied ? (
                 <button
-                    onClick={handleApplyToEvent}
+                    onClick={() => applyToEvent({ variables: { eventId: event.id } })}
                     className={`block w-full text-left px-4 py-2 ${isFullyBooked ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-100'}`}
                     disabled={isFullyBooked}
                 >
@@ -70,7 +45,7 @@ export default function ActionsButton({ event }) {
                 </button>
             ) : (
                 <button
-                    onClick={handleCancelApplication}
+                    onClick={() => cancelApplication({ variables: { eventId: event.id } })}
                     className="block w-full text-left px-4 py-2 text-red-700 hover:bg-red-100"
                 >
                     {translations.cancelApplication}
