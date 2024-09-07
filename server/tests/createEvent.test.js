@@ -1,5 +1,5 @@
+¡const { Mutation } = require('../graphql/resolvers');
 const { createEvent } = Mutation;
-const { Mutation } = require('../graphql/resolvers');
 const { CreateEventSchema } = require('../graphql/validation-schemas');
 const { handlePrismaErrors } = require('../graphql/prismaErrorHandler');
 
