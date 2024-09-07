@@ -15,7 +15,7 @@ const prismaMock = {
   };
   
   // Mock the error handler
-  jest.mock('../graphql/PrismaErrorHandler', () => ({
+  jest.mock('../graphql/prismaErrorHandler', () => ({
     handlePrismaErrors: jest.fn(),
   }));
 

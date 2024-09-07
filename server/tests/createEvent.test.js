@@ -1,4 +1,4 @@
-¡const { Mutation } = require('../graphql/resolvers');
+const { Mutation } = require('../graphql/resolvers');
 const { createEvent } = Mutation;
 const { CreateEventSchema } = require('../graphql/validation-schemas');
 const { handlePrismaErrors } = require('../graphql/prismaErrorHandler');
@@ -28,7 +28,7 @@ jest.mock('../graphql/validation-schemas', () => ({
 }));
 
 // Mock console.log to avoid cluttering the test output
-jest.spyOn(console, 'log').mockImplementation(() => {});
+jest.spyOn(console, 'log').mockImplementation(() => { });
 
 describe('createEvent resolver', () => {
     it('should create a new event successfully', async () => {
